@@ -8,21 +8,18 @@ BYTES_PER_FRAME = 2
 
 
 class MicReaderAbstract(InterruptHandler, threading.Thread):
-    def __init__(self,
-                 sample_rate_hertz: int = 8000,
-                 invocations_per_second: int = 50,
-                 ):
+    def __init__(self):
         InterruptHandler.__init__(self)
         threading.Thread.__init__(self)
-        self.sample_rate_hertz: int = sample_rate_hertz
-        self.invocations_per_second: int = invocations_per_second
+        self.sample_rate_hertz: int = 8000
+        self.invocations_per_second: int = 50
 
     def run(self):
         def callback(indata, frames, time, status):
             if status:
                 print(status)
             # Преобразуем данные в байты и отправляем на сервер
-            buf = indata.tobytes()
+            buf = indata.tobytes() # AI why 640 bytes?
             self._put_to_q(buf)
 
         dtype = f'int{int(BYTES_PER_FRAME * 8)}'
@@ -34,7 +31,6 @@ class MicReaderAbstract(InterruptHandler, threading.Thread):
 
         blocksize = int(self.sample_rate_hertz * BYTES_PER_FRAME / self.invocations_per_second)
         print(f'blocksize={blocksize}')
-
 
         with sounddevice.InputStream(
                 samplerate=self.sample_rate_hertz,
@@ -57,8 +53,8 @@ class MicReaderAbstract(InterruptHandler, threading.Thread):
 
 
 class MicReader(MicReaderAbstract):
-    def __init__(self, sample_rate_hertz: int = 8000, invocations_per_second=50):
-        super().__init__(sample_rate_hertz, invocations_per_second)
+    def __init__(self):
+        super().__init__()
         self._queue: queue.Queue[bytes] = queue.Queue()
 
     def _put_to_q(self, data: bytes):

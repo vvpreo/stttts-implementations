@@ -8,4 +8,4 @@ if __name__ == '__main__':
     mr.start()
 
     for chunk in mr.listen():
-        print(f'CHUNK ({len(chunk)}): {chunk[:60]}')
+        print(f'CHUNK ({len(chunk)}): {chunk[:20]}')
