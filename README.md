@@ -10,4 +10,6 @@ Some workable examples of implementing STT/TTS
 
 ## Yandex
 
--
+- `export YANDEX_API_KEY='<your_key>'`
+- `./scripts/run_stt_yandex.sh`
+- Press ctrl+c when finished te[](https://)sting. Default language is Russian. Change it in the code if needed.
