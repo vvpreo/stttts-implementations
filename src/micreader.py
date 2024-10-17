@@ -1,10 +1,9 @@
 import queue
 import threading
+from typing import Iterable
 
 import sounddevice
 from devbooster import InterruptHandler
-
-BYTES_PER_FRAME = 2
 
 
 class MicReaderAbstract(InterruptHandler, threading.Thread):
@@ -13,23 +12,24 @@ class MicReaderAbstract(InterruptHandler, threading.Thread):
         threading.Thread.__init__(self)
         self.sample_rate_hertz: int = 8000
         self.invocations_per_second: int = 50
+        self.bytes_per_frame: int = 2
 
     def run(self):
         def callback(indata, frames, time, status):
             if status:
                 print(status)
             # Преобразуем данные в байты и отправляем на сервер
-            buf = indata.tobytes() # AI why 640 bytes?
+            buf = indata.tobytes()  # AI why 640 bytes?
             self._put_to_q(buf)
 
-        dtype = f'int{int(BYTES_PER_FRAME * 8)}'
+        dtype = f'int{int(self.bytes_per_frame * 8)}'
         print(f'dtype={dtype}')
 
         print(self.sample_rate_hertz)
-        print(BYTES_PER_FRAME)
+        print(self.bytes_per_frame)
         print(self.invocations_per_second)
 
-        blocksize = int(self.sample_rate_hertz * BYTES_PER_FRAME / self.invocations_per_second)
+        blocksize = int(self.sample_rate_hertz * self.bytes_per_frame / self.invocations_per_second)
         print(f'blocksize={blocksize}')
 
         with sounddevice.InputStream(
@@ -60,7 +60,7 @@ class MicReader(MicReaderAbstract):
     def _put_to_q(self, data: bytes):
         self._queue.put_nowait(data)
 
-    def listen(self):
+    def listen(self) -> Iterable[bytes]:
         try:
             while next_chunk := self._queue.get(timeout=1):
                 yield next_chunk

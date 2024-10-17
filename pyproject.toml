@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "stttts-implementations"
+version = "0.1.0"
+description = "Some implementations around STT/TTS"
+authors = ["vvpreo <vvpreo@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+pyaudio = "^0.2.14"
+deepgram-sdk = "^3.7.3"
+devbooster = {git = "https://github.com/vvpreo/devbooster--python.git", branch="main"}
+sounddevice = "^0.5.1"
+numpy = "^2.1.2"
+pydantic = "^2.9.2"
+grpcio = "^1.67.0"
+protobuf = "5.27.2"
+
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
